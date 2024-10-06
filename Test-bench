@@ -1,0 +1,72 @@
+\\ test bench ffor the system
+
+module tb;
+
+reg a, b, sel;
+reg [31:0] in;
+reg [4:0] sel32;
+reg j, k, clk, reset;
+wire y2to1, y32to1;
+wire q_jk, [3:0] q_counter;
+
+// Instantiate the 2-to-1 MUX
+mux2to1 U1 (
+    .a(a),
+    .b(b),
+    .sel(sel),
+    .y(y2to1)
+);
+
+// Instantiate the 32-to-1 MUX
+mux32to1 U2 (
+    .in(in),
+    .sel(sel32),
+    .y(y32to1)
+);
+
+// Instantiate the JK flip-flop
+jk_flipflop U3 (
+    .j(j),
+    .k(k),
+    .clk(clk),
+    .reset(reset),
+    .q(q_jk)
+);
+
+// Instantiate the 4-bit counter
+counter4bit U4 (
+    .clk(clk),
+    .reset(reset),
+    .q(q_counter)
+);
+
+initial begin
+    // Initialize signals
+    a = 0; b = 1; sel = 0;
+    in = 32'hAAAAAAAA; sel32 = 5'd0;
+    j = 0; k = 0; clk = 0; reset = 1;
+
+    // Release reset after some time
+    #5 reset = 0;
+    
+    // Test the 2-to-1 MUX
+    #10 sel = 1;
+    #10 sel = 0;
+    
+    // Test the 32-to-1 MUX
+    #10 sel32 = 5'd2;
+    #10 sel32 = 5'd5;
+    
+    // Test JK flip-flop
+    #10 j = 1; k = 0;  // Set
+    #10 j = 0; k = 1;  // Reset
+    #10 j = 1; k = 1;  // Toggle
+    
+    // Test 4-bit counter
+    #100 $stop;
+end
+
+// Clock generation
+always #5 clk = ~clk;
+
+endmodule
