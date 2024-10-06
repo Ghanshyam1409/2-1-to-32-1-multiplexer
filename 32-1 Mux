@@ -1,0 +1,11 @@
+\\ 32-1 mux
+
+module mux32to1 (
+    input wire [31:0] in,  // 32 input lines
+    input wire [4:0] sel,  // 5-bit select signal to choose one of 32 inputs
+    output wire y
+);
+
+assign y = in[sel];
+
+endmodule
